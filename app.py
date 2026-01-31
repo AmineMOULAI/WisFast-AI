@@ -2,20 +2,22 @@ import streamlit as st
 import os
 
 with st.container(border=False, horizontal =True,horizontal_alignment = "center", vertical_alignment="top"):
-    st.image(os.path.join(os.getcwd(), "WisFast.png"), width=300)
+    st.image(os.path.join(os.getcwd(), "docs/WisFast.png"), width=300)
     #st.title("WisFast")
     st.header("Smart search in your books")
+
 
 def main():
 
     file = st.file_uploader("Upload your book")
-
+    print(file)
     query = st.text_input("What are you looking for ...?", "What are you looking for ...?", label_visibility="hidden")
     print(query)
 
     st.divider()
 
-    st.feedback("stars")
+    fb = st.feedback("stars")
+    print(fb)
 
 
 def book1():
