@@ -1,26 +1,18 @@
 import streamlit as st
 
-def footer():
-    st.markdown("""
+def footer(t):
+    # Séparateur visuel avant le footer
+    st.markdown("<br><hr style='border-color: #333;'>", unsafe_allow_html=True)
+    
+    # Footer classique dans le flux de la page (pas de 'position: fixed')
+    st.markdown(f"""
     <div style='
-        position: fixed; 
-        bottom: 0; 
-        left: 0; 
         width: 100%; 
-        background: #046e5c; 
-        color: white; 
+        color: #888; 
         text-align: center; 
-        padding: 10px; 
+        padding: 20px 0; 
         font-size: 14px;
-        z-index: 1000;
     '>
-        <p>⚡ WisFast AI - Semantic search in your PDFs | 
-        <a href="https://github.com/AmineMOULAI" style="color: #90EE90;">GitHub</a> | 
-        Made with ❤️ for UPVD L3 GL</p>
+        <p>{t['footer_text']}</p>
     </div>
-    <style>
-        .stApp { 
-            padding-bottom: 100px; 
-        }
-    </style>
     """, unsafe_allow_html=True)

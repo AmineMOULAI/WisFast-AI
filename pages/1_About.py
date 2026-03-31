@@ -3,39 +3,62 @@ import os
 import streamlit as st
 from components.footer import footer
 from components.warning import warning
+from components.translations import init_language, language_selector
 
+t = init_language()
 
-bolt = os.path.join(os.getcwd(), "docs/bolt.png")
-st.logo(bolt, size="large")
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif !important;
+    }
+    .about-subheader { 
+        text-align: center; 
+        color: #888; 
+        margin-top: -10px; 
+        margin-bottom: 40px; 
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+    .rtl-text { text-align: right; direction: rtl; font-family: 'Tajawal', sans-serif !important;}
+    
+    /* Bouton Langue élégant (copié du Home) */
+    button[key="global_lang_btn"] {
+        border-radius: 12px !important;
+        border: 1px solid #444 !important;
+        font-weight: 600 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-with st.container(border=False, horizontal =True,horizontal_alignment = "center", vertical_alignment="top"):
-    st.image(os.path.join(os.getcwd(), "docs/WisFast.png"), width=300)
+language_selector()
 
-about = """
-transforms your PDF documents into a smart research assistant. Upload any book or lengthy file, ask questions in plain language like "conseils patience face épreuves," and instantly get the top 5 most relevant pages with helpful context excerpts.​
-"""
-mission = """
-Tired of Ctrl+F searches that bury you under 50 irrelevant pages? We solve that frustration by delivering precise results in seconds, saving you 30-45 minutes per research session. Perfect for students tackling philosophy texts on Stoicism, researchers scanning reports, or anyone with dense PDFs.​
-"""
-funct = """
-Simply upload your PDF (up to 200 pages), type your question, and watch the magic. We analyze the content to surface exactly what you need—no more wasted time flipping pages.
-"""
-creation = """
-Developed for the L3 Computer Science Software Engineering course at Université de Perpignan Via Domitia (UPVD), under Benjamin Antunes. Due April 12, 2026. [**Amine Moulai**](https://github.com/AmineMOULAI) building real-world skills.​
-"""
-txt = [about, mission, funct, creation]
-badges = ["WisFast AI", "Our Mission", "How it works", "Created At"]
-def aboutWis():
-    for badge, t in zip(badges, txt):
-        yield f"**{badge}** \n\n"
-        for word in t.split(" "):
-            yield word + " "
-            time.sleep(0.02)
+bolt_path = os.path.join(os.getcwd(), "assets", "bolt.png")
+if os.path.exists(bolt_path): st.logo(bolt_path)
 
-        yield "\n\n"
+# Logo Principal Centré et de taille fixe (Résout le problème du logo géant)
+st.markdown("<div style='display: flex; justify-content: center;'>", unsafe_allow_html=True)
+logo_path = os.path.join(os.getcwd(), "assets", "WisFast.png")
+if os.path.exists(logo_path):
+    # La largeur est bloquée à 280px ici
+    st.image(logo_path, width=280)
+st.markdown("</div>", unsafe_allow_html=True)
 
-if st.button("**WisFast**", width="stretch"):
-    st.write_stream(aboutWis())
+rtl = "rtl-text" if st.session_state.lang == 'ar' else ""
+st.markdown(f"<h3 class='about-subheader {rtl}'>{t['about_subtitle']}</h3>", unsafe_allow_html=True)
+
+def about_stream():
+    for badge, txt in zip(t['badges'], t['texts_about']):
+        yield f"<div class='{rtl}'><h3 style='color: #046e5c;'>{badge}</h3>"
+        yield f"<p style='line-height: 1.6; color: #ddd;'>{txt}</p></div><hr style='border-color: #333;'>"
+        time.sleep(0.3)
+
+if st.button(t['about_btn'], use_container_width=True):
+    with st.container(border=True):
+        for chunk in about_stream():
+            st.markdown(chunk, unsafe_allow_html=True)
     warning()
 
 footer()
