@@ -1,64 +1,118 @@
-import time
-import os
 import streamlit as st
+import os
 from components.footer import footer
-from components.warning import warning
-from components.translations import init_language, language_selector
+from wisfast.ui.styles import apply_custom_styles
 
-t = init_language()
+apply_custom_styles()
 
+# Animation container
+st.markdown('<div class="fade-in">', unsafe_allow_html=True)
+
+# Hero Section for About Page
+col1, col2 = st.columns([1, 2], vertical_alignment="center")
+with col1:
+    st.image("docs/WisFast.png", width='stretch')
+with col2:
+    st.markdown("""
+    # REIMAGINING RESEARCH
+    ### BEYOND THE LIMITS OF CTRL+F
+    """)
+
+st.markdown("---")
+
+# Main Content with Custom Styling
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif !important;
+    .about-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid rgba(4, 110, 92, 0.1);
+        margin-bottom: 2rem;
     }
-    .about-subheader { 
-        text-align: center; 
-        color: #888; 
-        margin-top: -10px; 
-        margin-bottom: 40px; 
-        font-weight: 500;
-        letter-spacing: 0.5px;
+    .feature-header {
+        color: #046e5c;
+        font-family: 'Squada One', cursive;
+        font-size: 2rem;
+        margin-bottom: 1rem;
     }
-    .rtl-text { text-align: right; direction: rtl; font-family: 'Tajawal', sans-serif !important;}
-    
-    /* Bouton Langue élégant (copié du Home) */
-    button[key="global_lang_btn"] {
-        border-radius: 12px !important;
-        border: 1px solid #444 !important;
-        font-weight: 600 !important;
+    .about-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #444;
+    }
+    .highlight {
+        color: #046e5c;
+        font-weight: 700;
     }
 </style>
 """, unsafe_allow_html=True)
 
-language_selector()
+with st.container():
+    st.markdown("""
+    <div class="about-card">
+        <div class="feature-header">THE VISION</div>
+        <p class="about-text">
+            <span class="highlight">WisFast AI</span> was born from a simple frustration: 
+            the traditional way of searching through large documents is broken. 
+            Standard keyword matching is too literal, often missing the context that matters most. 
+            I built this tool to bridge that gap, using <span class="highlight">Semantic Search</span> 
+            to understand the <i>intent</i> behind your questions, not just the words.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-bolt_path = os.path.join(os.getcwd(), "assets", "bolt.png")
-if os.path.exists(bolt_path): st.logo(bolt_path)
+col_a, col_b = st.columns(2)
 
-# Logo Principal Centré et de taille fixe (Résout le problème du logo géant)
-st.markdown("<div style='display: flex; justify-content: center;'>", unsafe_allow_html=True)
-logo_path = os.path.join(os.getcwd(), "assets", "WisFast.png")
-if os.path.exists(logo_path):
-    # La largeur est bloquée à 280px ici
-    st.image(logo_path, width=280)
-st.markdown("</div>", unsafe_allow_html=True)
+with col_a:
+    st.markdown("""
+    <div class="about-card">
+        <div class="feature-header">SMART INDEXING</div>
+        <p class="about-text">
+            By leveraging advanced <b>TF-IDF algorithms</b> and <b>Cosine Similarity</b>, 
+            WisFast transforms flat PDF text into a multi-dimensional knowledge base. 
+            It analyzes page relevance in milliseconds.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-rtl = "rtl-text" if st.session_state.lang == 'ar' else ""
-st.markdown(f"<h3 class='about-subheader {rtl}'>{t['about_subtitle']}</h3>", unsafe_allow_html=True)
+with col_b:
+    st.markdown("""
+    <div class="about-card">
+        <div class="feature-header">YOUR DATA, SECURE</div>
+        <p class="about-text">
+            This is a <b>privacy-first</b> application. All processing happens locally or on your dedicated 
+            instance. Your documents are indexed into a private SQLite database, 
+            ensuring your research stays yours.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-def about_stream():
-    for badge, txt in zip(t['badges'], t['texts_about']):
-        yield f"<div class='{rtl}'><h3 style='color: #046e5c;'>{badge}</h3>"
-        yield f"<p style='line-height: 1.6; color: #ddd;'>{txt}</p></div><hr style='border-color: #333;'>"
-        time.sleep(0.3)
+st.markdown("""
+<div class="about-card" style="text-align: center;">
+    <div class="feature-header">CRAFTED BY AMINE MOULAI</div>
+    <p class="about-text">
+        A passion project focused on pushing the boundaries of what's possible with 
+        Python and Natural Language Processing. Built for researchers, students, 
+        and anyone who values their time.
+    </p>
+    <br>
+    <a href="https://github.com/AmineMOULAI" target="_blank" style="text-decoration: none;">
+        <button style="
+            background-color: #046e5c;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Squada One', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(4, 110, 92, 0.3);
+        ">VIEW PORTFOLIO</button>
+    </a>
+</div>
+""", unsafe_allow_html=True)
 
-if st.button(t['about_btn'], use_container_width=True):
-    with st.container(border=True):
-        for chunk in about_stream():
-            st.markdown(chunk, unsafe_allow_html=True)
-    warning()
+st.markdown('</div>', unsafe_allow_html=True)
 
 footer()
