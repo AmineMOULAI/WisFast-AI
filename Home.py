@@ -13,29 +13,39 @@ def main():
     st.set_page_config(page_title="WisFast AI", page_icon="⚡", layout="wide", initial_sidebar_state="collapsed")
     apply_custom_styles()
 
+    # Reduce Streamlit's default top padding
+    st.markdown("""
+        <style>
+            .block-container {
+                padding-top: 1rem !important;
+                padding-bottom: 0rem !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
     # Get logo base64 for animation
     logo_base64 = get_image_as_base64("assets/WisFast.png")
 
-    # Animated Hero Section - Centered and Compact for "Above the Fold" visibility
+    # Animated Hero Section - Ultra-Compact for "Above the Fold" visibility
     st.markdown(f"""
-    <div style="text-align: center; padding: 2rem 0 1rem 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <img src="data:image/png;base64,{logo_base64}" class="bolt-animated" style="width: 320px; margin-bottom: 1rem;">
-        <h1 style="font-size: 5rem; color: #ffffff; line-height: 1.1; margin: 0; font-family: 'Squada One', cursive;">
+    <div style="text-align: center; padding: 0.5rem 0 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <img src="data:image/png;base64,{logo_base64}" class="bolt-animated" style="width: 280px; margin-bottom: 0.5rem;">
+        <h1 style="font-size: 4.5rem; color: #ffffff; line-height: 1; margin: 0; font-family: 'Squada One', cursive;">
             BEYOND SEARCH. <br><span style="color: #046e5c;">UNDERSTANDING.</span>
         </h1>
-        <p style="font-size: 1.3rem; color: #a0aec0; max-width: 700px; margin: 1.5rem auto 2rem auto;">
+        <p style="font-size: 1.2rem; color: #a0aec0; max-width: 700px; margin: 1rem auto 1.5rem auto;">
             Experience the power of Semantic Intelligence. Transform your PDFs into a dynamic knowledge base that understands your intent.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
     # Glassmorphism Launch Button
-    col1, col2, col3 = st.columns([1, 1, 1])
+    col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
-        if st.button("🚀 LAUNCH RESEARCH ENGINE", width='stretch'):
+        if st.button("🚀 LAUNCH RESEARCH ENGINE", use_container_width=True):
             st.switch_page("pages/2_App.py")
 
-    st.markdown("<div style='margin-bottom: 3rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
     # Feature Cards with Dark Theme Styling
     f1, f2, f3 = st.columns(3)
