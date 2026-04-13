@@ -164,6 +164,6 @@ def apply_custom_styles():
         animation: bolt-glow 3s ease-in-out infinite;
     }
 
-    #MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden; }
+    #MainMenu, footer { visibility: hidden; }
     </style>
     """, unsafe_allow_html=True)

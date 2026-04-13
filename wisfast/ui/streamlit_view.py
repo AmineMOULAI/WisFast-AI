@@ -21,7 +21,7 @@ def get_image_as_base64(path):
         return ""
 
 def run():
-    st.set_page_config(page_title="WisFast Engine", page_icon="⚡", layout="wide")
+    st.set_page_config(page_title="WisFast Engine", page_icon="⚡", layout="wide", initial_sidebar_state="expanded")
     apply_custom_styles()
     
     repo = SQLiteRepository()
