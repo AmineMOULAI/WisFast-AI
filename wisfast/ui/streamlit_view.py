@@ -87,36 +87,40 @@ def run():
                     st.rerun()
 
     # --- MAIN CONTENT AREA ---
-    st.markdown('<div class="main-content-container fade-in">', unsafe_allow_html=True)
-
     current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id else None
     query = st.session_state.search_query
-
-    # 1. Initial State / Results Header
-    if not query:
+    
+    # If no book is selected, show the HERO view
+    if not current_book:
         logo_base64 = get_image_as_base64("assets/bolt.png")
         st.markdown(f"""
-            <div style="text-align: center; margin-top: 15vh;">
-                <img src="data:image/png;base64,{logo_base64}" class="bolt-animated" style="width: 120px; margin-bottom: 2rem;">
-                <h1 style='font-size: 3.5rem; font-family: "Squada One", cursive; color: white;'>
-                    What do you want to know?
+            <div class="hero-container fade-in">
+                <img src="data:image/png;base64,{logo_base64}" class="hero-bolt">
+                <h1 style='font-size: 4rem; font-family: "Squada One", cursive; color: white; margin: 0;'>
+                    WISFAST ENGINE
                 </h1>
-                <p style="color: #a0aec0; font-size: 1.2rem;">Search across your intelligent knowledge base.</p>
+                <p style="color: #a0aec0; font-size: 1.4rem; max-width: 600px; margin-bottom: 1rem;">
+                    Upload a research paper or choose from your library to start your intelligent search experience.
+                </p>
             </div>
         """, unsafe_allow_html=True)
+        
+        # Center uploader in hero
+        _, uploader_col, _ = st.columns([1, 2, 1])
+        with uploader_col:
+            st.markdown('<div class="hero-uploader">', unsafe_allow_html=True)
+            uploaded_file = st.file_uploader("Drop your PDF here", type=["pdf"], key="hero_uploader")
+            st.markdown('</div>', unsafe_allow_html=True)
     else:
-        header_text = f"Research in: {current_book['display_name']}" if current_book else "Global Search Results"
+        # We have a book, show search results or prompt
+        st.markdown('<div class="main-content-container fade-in">', unsafe_allow_html=True)
+        
+        header_text = f"Research in: {current_book['display_name']}"
         st.markdown(f"<h3 style='font-family: \"Squada One\", cursive; color: #4ecdc4; margin-bottom: 2rem;'>{header_text}</h3>", unsafe_allow_html=True)
 
-    # 2. Results Display
-    if query:
-        search_target_id = st.session_state.selected_book_id if current_book else (books[0]['id'] if books else None)
-        
-        if not search_target_id:
-            st.warning("Please upload a document to begin searching.")
-        else:
+        if query:
             with st.spinner("Sourcing..."):
-                results = search_strategy.search(query, search_target_id, k=5)
+                results = search_strategy.search(query, current_book['id'], k=5)
             
             if results:
                 for r in results:
@@ -134,38 +138,39 @@ def run():
                     """, unsafe_allow_html=True)
             else:
                 st.warning("No exact matches found. Try broad keywords.")
+        else:
+            st.info("Ready! Use the search bar below to ask questions about this document.")
 
-    st.markdown('</div>', unsafe_allow_html=True) # End main-content-container
-
-    # --- FIXED BOTTOM ACTION BAR ---
-    st.markdown('<div class="bottom-bar-fixed">', unsafe_allow_html=True)
-    
-    # We use columns inside the fixed bar to align uploader and text input
-    bar_col1, bar_col2 = st.columns([1, 15])
-    
-    with bar_col1:
-        st.markdown('<div class="compact-uploader">', unsafe_allow_html=True)
-        uploaded_file = st.file_uploader("Upload", type=["pdf"], label_visibility="collapsed", key="bar_uploader")
         st.markdown('</div>', unsafe_allow_html=True)
+
+        # --- FIXED BOTTOM ACTION BAR (Only shown when book is selected) ---
+        st.markdown('<div class="bottom-bar-fixed">', unsafe_allow_html=True)
+        st.markdown('<div class="action-bar-pill">', unsafe_allow_html=True)
         
-    with bar_col2:
-        # Use a form or on_change to handle search without a visible button
-        def handle_search():
-            st.session_state.search_query = st.session_state.new_query_input
-            if st.session_state.search_query and current_book:
-                repo.add_search_history(current_book['id'], st.session_state.search_query)
+        bar_col1, bar_col2 = st.columns([1, 15])
+        
+        with bar_col1:
+            st.markdown('<div class="compact-uploader">', unsafe_allow_html=True)
+            uploaded_file = st.file_uploader("+", type=["pdf"], label_visibility="collapsed", key="bar_uploader")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+        with bar_col2:
+            def handle_search():
+                st.session_state.search_query = st.session_state.new_query_input
+                if st.session_state.search_query and current_book:
+                    repo.add_search_history(current_book['id'], st.session_state.search_query)
 
-        st.text_input(
-            "Search",
-            placeholder="Ask WisFast AI anything...",
-            label_visibility="collapsed",
-            key="new_query_input",
-            on_change=handle_search
-        )
+            st.text_input(
+                "Search",
+                placeholder=f"Search in {current_book['display_name']}...",
+                label_visibility="collapsed",
+                key="new_query_input",
+                on_change=handle_search
+            )
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # 3. Processing logic for direct uploader
+    # File processing logic
     if uploaded_file:
         with st.status(f"Indexing {uploaded_file.name}...", expanded=True) as status:
             temp_pdf_path = f"temp_{uuid.uuid4()}.pdf"
@@ -193,10 +198,12 @@ def run():
                     
                     status.update(label="✅ Index Ready!", state="complete")
                     st.session_state.selected_book_id = book_id
+                    st.session_state.search_query = ""
                     st.rerun()
             finally:
                 if os.path.exists(temp_pdf_path):
                     os.remove(temp_pdf_path)
+
 
 if __name__ == "__main__":
     run()

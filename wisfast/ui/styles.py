@@ -73,77 +73,51 @@ def apply_custom_styles():
         margin-top: 4px !important;
     }
 
-    /* --- CHAT-LIKE CONTENT AREA --- */
-    .main-content-container {
-        max-width: 850px;
-        margin: 0 auto;
-        padding-bottom: 150px; /* Space for bottom bar */
-    }
-
-    .result-card {
-        background: transparent;
-        padding: 1.5rem 0;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 1rem;
-    }
-
-    .doc-badge {
-        background: rgba(4, 110, 92, 0.2);
-        color: var(--secondary-color);
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-family: 'Squada One', cursive;
-        font-size: 0.8rem;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
-
-    .source-text-block {
-        margin-top: 15px;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        color: #e2e8f0;
-        font-size: 0.95rem;
-        line-height: 1.8;
-        white-space: pre-wrap;
-    }
-
-    /* --- FLOATING BOTTOM ACTION BAR --- */
-    .stChatInputContainer {
-        padding-bottom: 30px !important;
-    }
-
-    /* Styling for the custom action bar container */
-    .bottom-bar-fixed {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 20px 0 40px 0;
-        background: linear-gradient(to top, var(--bg-dark) 70%, transparent);
-        z-index: 99;
+    /* --- HERO SECTION --- */
+    .hero-container {
         display: flex;
-        justify-content: center;
-    }
-
-    .action-bar-pill {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--border-color);
-        border-radius: 20px;
-        padding: 8px 15px;
-        width: 100%;
-        max-width: 800px;
-        display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 10px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        justify-content: center;
+        height: 70vh;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .hero-bolt {
+        width: 120px;
+        filter: drop-shadow(0 0 15px rgba(78, 205, 196, 0.4));
+        animation: bolt-float 3s ease-in-out infinite;
+    }
+
+    @keyframes bolt-float {
+        0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 15px rgba(78, 205, 196, 0.4)); }
+        50% { transform: translateY(-20px) scale(1.05); filter: drop-shadow(0 0 30px rgba(78, 205, 196, 0.8)); }
+    }
+
+    /* --- MODERN UPLOADER --- */
+    .hero-uploader [data-testid="stFileUploader"] {
+        width: 300px;
+        margin: 0 auto;
+    }
+
+    .hero-uploader [data-testid="stFileUploader"] section {
+        background-color: rgba(4, 110, 92, 0.1) !important;
+        border: 2px dashed var(--primary-color) !important;
+        border-radius: 20px !important;
+        padding: 2rem !important;
+        transition: var(--transition);
+    }
+
+    .hero-uploader [data-testid="stFileUploader"] section:hover {
+        border-color: var(--secondary-color) !important;
+        background-color: rgba(4, 110, 92, 0.2) !important;
+        transform: translateY(-5px);
     }
 
     /* --- COMPACT UPLOADER AS + ICON --- */
     .compact-uploader [data-testid="stFileUploader"] {
-        width: 40px;
+        width: 48px;
     }
     .compact-uploader [data-testid="stFileUploader"] section {
         padding: 0 !important;
@@ -154,31 +128,62 @@ def apply_custom_styles():
         display: none;
     }
     .compact-uploader [data-testid="stFileUploader"] button {
-        background: rgba(255,255,255,0.1) !important;
+        background: var(--btn-gradient) !important;
         border-radius: 50% !important;
-        width: 36px !important;
-        height: 36px !important;
-        min-width: 36px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
         margin: 0 !important;
         color: white !important;
         border: none !important;
         font-size: 0 !important;
+        box-shadow: 0 4px 15px rgba(4, 110, 92, 0.4) !important;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     }
     .compact-uploader [data-testid="stFileUploader"] button::before {
         content: "+";
-        font-size: 24px;
-        font-weight: 300;
+        font-size: 28px;
+        font-weight: 400;
+        display: block;
     }
     .compact-uploader [data-testid="stFileUploader"] button:hover {
-        background: var(--primary-color) !important;
-        transform: scale(1.1);
+        transform: rotate(90deg) scale(1.15) !important;
+        box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6) !important;
+    }
+    .compact-uploader [data-testid="stFileUploader"] button:active {
+        transform: rotate(180deg) scale(0.95) !important;
     }
 
-    /* --- SEARCH INPUT REFINEMENT --- */
+    /* --- SEARCH BAR --- */
+    .bottom-bar-fixed {
+        position: fixed;
+        bottom: 40px;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        display: flex;
+        justify-content: center;
+        padding: 0 20px;
+    }
+
+    .action-bar-pill {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 8px 16px;
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
     .stTextInput input {
         background-color: transparent !important;
         border: none !important;
-        padding: 10px 0 !important;
+        padding: 12px 0 !important;
         color: white !important;
         font-size: 1.1rem !important;
     }
@@ -187,18 +192,41 @@ def apply_custom_styles():
         border: none !important;
     }
 
-    /* --- ANIMATIONS --- */
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+    /* --- RESULTS --- */
+    .main-content-container {
+        max-width: 850px;
+        margin: 0 auto;
+        padding-top: 2rem;
+        padding-bottom: 150px;
+    }
 
-    @keyframes bolt-glow {
-        0% { filter: drop-shadow(0 0 5px rgba(78, 205, 196, 0.2)); transform: translateY(0); }
-        50% { filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.6)); transform: translateY(-10px); }
-        100% { filter: drop-shadow(0 0 5px rgba(78, 205, 196, 0.2)); transform: translateY(0); }
+    .result-card {
+        background: rgba(255, 255, 255, 0.02);
+        padding: 1.5rem;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+        transition: var(--transition);
     }
-    .bolt-animated {
-        animation: bolt-glow 3s ease-in-out infinite;
+    .result-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(78, 205, 196, 0.2);
     }
+
+    .doc-badge {
+        background: rgba(78, 205, 196, 0.1);
+        color: var(--secondary-color);
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-family: 'Squada One', cursive;
+        font-size: 0.85rem;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
     #MainMenu, footer { visibility: hidden; }
     </style>
