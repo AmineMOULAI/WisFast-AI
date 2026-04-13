@@ -43,6 +43,8 @@ def main():
     col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
         if st.button("🚀 LAUNCH RESEARCH ENGINE", use_container_width=True):
+            st.session_state.selected_book_id = None
+            st.session_state.search_query = ""
             st.switch_page("pages/2_App.py")
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)

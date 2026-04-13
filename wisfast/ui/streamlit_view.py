@@ -40,7 +40,60 @@ def run():
         st.session_state.show_uploader = False
 
     # --- SIDEBAR ---
-    # ... (sidebar code remains the same)
+    with st.sidebar:
+        st.markdown(f"""
+        <div class="bolt-container" style="margin-bottom: 2rem;">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/lightning-bolt.png" style="width:30px;">
+            <span class="bolt-text" style="font-size: 1.5rem; color: white; margin-left:10px;">WisFast AI</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown('<div class="sidebar-section-header">Navigation</div>', unsafe_allow_html=True)
+        if st.button("🏠 Home Feed", width='stretch', key="nav_home"):
+            st.session_state.selected_book_id = None
+            st.session_state.search_query = ""
+            st.switch_page("Home.py")
+            
+        if st.button("⚡ New Research", width='stretch', key="nav_app_new"):
+            st.session_state.selected_book_id = None
+            st.session_state.search_query = ""
+            st.session_state.show_uploader = False
+            st.rerun()
+        
+        st.markdown('<div class="sidebar-section-header">Recent Research</div>', unsafe_allow_html=True)
+        all_history = repo.get_all_search_history(limit=5)
+        if not all_history:
+            st.caption("No recent threads.")
+        for h in all_history:
+            h_col1, h_col2 = st.columns([5, 1])
+            with h_col1:
+                if st.button(f"🔍 {h['query'][:20]}...", key=f"side_h_{h['id']}", width='stretch'):
+                    st.session_state.selected_book_id = h['book_id']
+                    st.session_state.search_query = h['query']
+                    st.rerun()
+            with h_col2:
+                if st.button("🗑️", key=f"del_h_{h['id']}", help="Delete thread"):
+                    repo.delete_search_history(h['id'])
+                    st.rerun()
+
+        st.markdown('<div class="sidebar-section-header">Knowledge Library</div>', unsafe_allow_html=True)
+        books = repo.get_books()
+        if not books:
+            st.caption("Library is empty.")
+        for b in books:
+            b_col1, b_col2 = st.columns([5, 1])
+            with b_col1:
+                if st.button(f"📄 {b['display_name'][:20]}", width='stretch', key=f"side_b_{b['id']}"):
+                    st.session_state.selected_book_id = b['id']
+                    st.session_state.search_query = ""
+                    st.session_state.show_uploader = False
+                    st.rerun()
+            with b_col2:
+                if st.button("🗑️", key=f"del_b_{b['id']}", help="Remove book"):
+                    repo.delete_book(b['id'])
+                    if st.session_state.selected_book_id == b['id']:
+                        st.session_state.selected_book_id = None
+                    st.rerun()
 
     # --- MAIN CONTENT AREA ---
     current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id else None
