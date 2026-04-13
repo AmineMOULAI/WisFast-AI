@@ -57,6 +57,15 @@ st.markdown("""
         font-size: 2rem;
         margin-bottom: 1rem;
     }
+    @keyframes name-glow {
+        0% { color: #ffffff; text-shadow: 0 0 5px rgba(255,255,255,0.1); }
+        50% { color: #4ecdc4; text-shadow: 0 0 15px rgba(78,205,196,0.5); }
+        100% { color: #ffffff; text-shadow: 0 0 5px rgba(255,255,255,0.1); }
+    }
+    .animated-name {
+        animation: name-glow 3s ease-in-out infinite;
+        font-weight: 700;
+    }
     .about-text {
         font-size: 1.1rem;
         line-height: 1.6;
@@ -111,7 +120,7 @@ with col_b:
 
 st.markdown("""
 <div class="about-card" style="text-align: center;">
-    <div class="feature-header">CRAFTED BY AMINE MOULAI</div>
+    <div class="feature-header">CRAFTED BY <span class="animated-name">AMINE MOULAI</span></div>
     <p class="about-text">
         A passion project focused on pushing the boundaries of what's possible with 
         Python and Natural Language Processing. Built for researchers, students, 
