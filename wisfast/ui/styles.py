@@ -125,6 +125,39 @@ def apply_custom_styles():
         border-color: var(--secondary-color) !important;
     }
 
+    /* --- COMPACT FILE UPLOADER AS BUTTON --- */
+    .compact-uploader [data-testid="stFileUploader"] {
+        width: 48px;
+        padding: 0;
+    }
+    .compact-uploader [data-testid="stFileUploader"] section {
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+    .compact-uploader [data-testid="stFileUploader"] section > div {
+        display: none; /* Hide 'Drag and drop' text */
+    }
+    .compact-uploader [data-testid="stFileUploader"] button {
+        background: var(--btn-gradient) !important;
+        border-radius: 50% !important;
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        margin: 0 !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        font-size: 0 !important; /* Hide 'Browse files' text */
+    }
+    .compact-uploader [data-testid="stFileUploader"] button::before {
+        content: "➕";
+        font-size: 20px;
+    }
+    .compact-uploader [data-testid="stFileUploader"] button:hover {
+        transform: scale(1.1) rotate(90deg);
+        border-color: var(--secondary-color) !important;
+    }
+
     /* --- SEARCH BAR REFINEMENT --- */
     .stTextInput input {
         background-color: rgba(255, 255, 255, 0.04) !important;
