@@ -1,22 +1,43 @@
 import streamlit as st
 import os
+import base64
 from components.footer import footer
 from wisfast.ui.styles import apply_custom_styles
 
+def get_image_as_base64(path):
+    with open(path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+st.set_page_config(page_title="About - WisFast AI", page_icon="⚡", layout="wide")
 apply_custom_styles()
+
+# Reduce Streamlit's default top padding
+st.markdown("""
+    <style>
+        .block-container {
+            padding-top: 1rem !important;
+            padding-bottom: 0rem !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Get logo base64
+logo_base64 = get_image_as_base64("assets/WisFast.png")
 
 # Animation container
 st.markdown('<div class="fade-in">', unsafe_allow_html=True)
 
-# Hero Section for About Page
-col1, col2 = st.columns([1, 2], vertical_alignment="center")
-with col1:
-    st.image("assets/WisFast.png", width='stretch')
-with col2:
-    st.markdown("""
-    # REIMAGINING RESEARCH
-    ### BEYOND THE LIMITS OF CTRL+F
-    """)
+# Compact Hero Section for About Page
+st.markdown(f"""
+<div style="text-align: center; padding: 0.5rem 0 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <img src="data:image/png;base64,{logo_base64}" style="width: 200px; margin-bottom: 0.5rem;">
+    <h1 style="font-size: 3.5rem; color: #ffffff; line-height: 1; margin: 0; font-family: 'Squada One', cursive;">
+        REIMAGINING <span style="color: #046e5c;">RESEARCH</span>
+    </h1>
+    <h3 style="font-size: 1.5rem; color: #a0aec0; margin-top: 0.5rem; font-family: 'Squada One', cursive;">BEYOND THE LIMITS OF CTRL+F</h3>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -39,7 +60,7 @@ st.markdown("""
     .about-text {
         font-size: 1.1rem;
         line-height: 1.6;
-        color: #444;
+        color: #a0aec0;
     }
     .highlight {
         color: #046e5c;
