@@ -90,7 +90,7 @@ def run():
     current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id else None
     query = st.session_state.search_query
     
-    # If no book is selected, show the HERO view
+    # If no book is selected, show the HERO view (just bolt and title)
     if not current_book:
         logo_base64 = get_image_as_base64("assets/bolt.png")
         st.markdown(f"""
@@ -100,19 +100,12 @@ def run():
                     WISFAST ENGINE
                 </h1>
                 <p style="color: #a0aec0; font-size: 1.4rem; max-width: 600px; margin-bottom: 1rem;">
-                    Upload a research paper or choose from your library to start your intelligent search experience.
+                    Upload a research paper to start your intelligent search experience.
                 </p>
             </div>
         """, unsafe_allow_html=True)
-        
-        # Center uploader in hero
-        _, uploader_col, _ = st.columns([1, 2, 1])
-        with uploader_col:
-            st.markdown('<div class="hero-uploader">', unsafe_allow_html=True)
-            uploaded_file = st.file_uploader("Drop your PDF here", type=["pdf"], key="hero_uploader")
-            st.markdown('</div>', unsafe_allow_html=True)
     else:
-        # We have a book, show search results or prompt
+        # We have a book, show search results or workspace
         st.markdown('<div class="main-content-container fade-in">', unsafe_allow_html=True)
         
         if query:
@@ -150,32 +143,35 @@ def run():
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # --- FIXED BOTTOM ACTION BAR (Only shown when book is selected) ---
-        st.markdown('<div class="bottom-bar-fixed">', unsafe_allow_html=True)
-        st.markdown('<div class="action-bar-pill">', unsafe_allow_html=True)
+    # --- SHARED FIXED BOTTOM ACTION BAR ---
+    st.markdown('<div class="bottom-bar-fixed">', unsafe_allow_html=True)
+    st.markdown('<div class="action-bar-pill">', unsafe_allow_html=True)
+    
+    bar_col1, bar_col2 = st.columns([1, 15])
+    
+    with bar_col1:
+        st.markdown('<div class="compact-uploader" title="Upload new book">', unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("+", type=["pdf"], label_visibility="collapsed", key="bar_uploader")
+        st.markdown('</div>', unsafe_allow_html=True)
         
-        bar_col1, bar_col2 = st.columns([1, 15])
-        
-        with bar_col1:
-            st.markdown('<div class="compact-uploader" title="Upload new book">', unsafe_allow_html=True)
-            uploaded_file = st.file_uploader("+", type=["pdf"], label_visibility="collapsed", key="bar_uploader")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-        with bar_col2:
-            def handle_search():
+    with bar_col2:
+        def handle_search():
+            if st.session_state.new_query_input and current_book:
                 st.session_state.search_query = st.session_state.new_query_input
-                if st.session_state.search_query and current_book:
-                    repo.add_search_history(current_book['id'], st.session_state.search_query)
+                repo.add_search_history(current_book['id'], st.session_state.search_query)
+            elif st.session_state.new_query_input and not current_book:
+                st.toast("Please upload a book first!", icon="⚠️")
 
-            st.text_input(
-                "Search",
-                placeholder=f"Ask anything about {current_book['display_name']}...",
-                label_visibility="collapsed",
-                key="new_query_input",
-                on_change=handle_search
-            )
+        placeholder_text = f"Ask anything about {current_book['display_name']}..." if current_book else "Upload a PDF to start searching..."
+        st.text_input(
+            "Search",
+            placeholder=placeholder_text,
+            label_visibility="collapsed",
+            key="new_query_input",
+            on_change=handle_search
+        )
 
-        st.markdown('</div></div>', unsafe_allow_html=True)
+    st.markdown('</div></div>', unsafe_allow_html=True)
 
     # File processing logic
     if uploaded_file:

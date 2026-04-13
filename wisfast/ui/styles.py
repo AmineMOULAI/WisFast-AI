@@ -115,20 +115,32 @@ def apply_custom_styles():
         transform: translateY(-5px);
     }
 
-    /* --- COMPACT UPLOADER AS + ICON --- */
+    /* --- COMPACT UPLOADER AS GREEN + ICON --- */
     .compact-uploader [data-testid="stFileUploader"] {
         width: 48px;
+        padding: 0 !important;
     }
-    .compact-uploader [data-testid="stFileUploader"] section {
+    
+    /* Hide ALL default Streamlit uploader elements */
+    [data-testid="stFileUploader"] section {
         padding: 0 !important;
         background: transparent !important;
         border: none !important;
+        min-height: 0 !important;
     }
-    .compact-uploader [data-testid="stFileUploader"] section > div {
-        display: none;
+    [data-testid="stFileUploader"] label, 
+    [data-testid="stFileUploader"] small, 
+    [data-testid="stFileUploader"] div[data-testid="stMarkdownContainer"],
+    [data-testid="stFileUploaderDropzone"] > div {
+        display: none !important;
     }
+    /* Hide the uploaded file list */
+    [data-testid="stFileUploader"] section + div {
+        display: none !important;
+    }
+
     .compact-uploader [data-testid="stFileUploader"] button {
-        background: var(--btn-gradient) !important;
+        background: linear-gradient(135deg, #00c853 0%, #009624 100%) !important;
         border-radius: 50% !important;
         width: 44px !important;
         height: 44px !important;
@@ -137,27 +149,28 @@ def apply_custom_styles():
         color: white !important;
         border: none !important;
         font-size: 0 !important;
-        box-shadow: 0 4px 15px rgba(4, 110, 92, 0.4) !important;
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     .compact-uploader [data-testid="stFileUploader"] button::before {
         content: "+";
-        font-size: 28px;
-        font-weight: 400;
+        font-size: 30px;
+        font-weight: 500;
         display: block;
+        line-height: 1;
     }
     .compact-uploader [data-testid="stFileUploader"] button:hover {
-        transform: rotate(90deg) scale(1.15) !important;
-        box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6) !important;
-    }
-    .compact-uploader [data-testid="stFileUploader"] button:active {
-        transform: rotate(180deg) scale(0.95) !important;
+        transform: rotate(90deg) scale(1.1) !important;
+        box-shadow: 0 6px 20px rgba(0, 200, 83, 0.5) !important;
     }
 
     /* --- SEARCH BAR --- */
     .bottom-bar-fixed {
         position: fixed;
-        bottom: 40px;
+        bottom: 50px;
         left: 0;
         right: 0;
         z-index: 99;
@@ -167,17 +180,17 @@ def apply_custom_styles():
     }
 
     .action-bar-pill {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--border-color);
-        border-radius: 24px;
-        padding: 8px 16px;
+        background: rgba(15, 35, 32, 0.8);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        padding: 10px 20px;
         width: 100%;
         max-width: 800px;
         display: flex;
         align-items: center;
-        gap: 12px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        gap: 15px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.6);
     }
 
     .stTextInput input {
