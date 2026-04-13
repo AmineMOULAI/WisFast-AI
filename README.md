@@ -1,28 +1,62 @@
-# wisFast AI
+# ⚡ WisFast AI
 
-A production-ready Streamlit web app that performs semantic search over uploaded PDF books using a TF‑IDF + cosine similarity pipeline.
+<div align="center">
+  <img src="assets/bolt.png" width="200" alt="WisFast Logo">
+  <h1>BEYOND SEARCH. <br><span style="color: #046e5c;">UNDERSTANDING.</span></h1>
+  <p><i>Experience the power of Semantic Intelligence. Transform your PDFs into a dynamic knowledge base.</i></p>
+</div>
 
-## Features
-- **Fast Upload & Processing**: Upload PDFs and automatically extract text page-by-page.
-- **Semantic Search**: Searches using TF-IDF and Cosine Similarity to find the most relevant pages.
-- **Smart Interface**: Built with Streamlit, provides snippet extraction, relevance scores, and allows you to read the matching pages.
+---
 
-## Quickstart
+## 🚀 Overview
+**WisFast AI** is a professional-grade research assistant designed to move beyond traditional keyword matching. By leveraging **TF-IDF algorithms** and **Cosine Similarity**, it understands the *intent* behind your questions, finding exactly what you need in seconds across hundreds of pages.
 
-### Running Locally
-1. `python3 -m venv venv`
-2. `source venv/bin/activate`
-3. `pip install -r requirements.txt`
-4. `streamlit run app.py`
+## ✨ Key Features
+- **⚡ Instant Indexing:** Semantically index large PDF documents in seconds.
+- **🎯 Semantic Precision:** Intelligent ranking that maps intent, not just keywords.
+- **🛡️ Private & Secure:** Local SQLite storage and processing ensures your data stays yours.
+- **📱 Modern UI:** Glassmorphism design with a dark theme, built for high-speed research.
 
-### Running with Docker
-1. `docker build -t wisfast-ai .`
-2. `docker run -p 8501:8501 wisfast-ai`
-   *Or with Docker Compose:*
-   `docker-compose up -d`
+## 🛠️ Tech Stack
+- **Frontend:** Streamlit with Custom CSS (Glassmorphism)
+- **NLP Engine:** Scikit-learn (TF-IDF), NLTK (French Tokenization)
+- **Data Layer:** SQLite for metadata, Pickle for sparse matrices
+- **PDF Core:** PyPDF2
 
-## NLP Pipeline
-- **Extraction**: Uses `PyPDF2` to extract text from each page.
-- **Preprocessing**: Cleans the text by converting it to lowercase, tokenizing, removing punctuation and French stopwords using `NLTK`.
-- **Indexing**: A `TfidfVectorizer` (max_features=5000, n-gram=(1,2)) transforms the page texts into a sparse matrix per book.
-- **Search**: Computes the cosine similarity between the query vector and the book's document matrix to rank the top pages.
+## 📦 Quick Start
+
+### Prerequisites
+- Python 3.11+
+- Virtual environment (recommended)
+
+### Installation
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/AmineMOULAI/WisFast-AI.git
+   cd WisFast-AI
+   ```
+
+2. **Setup Environment:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+3. **Launch the Engine:**
+   ```bash
+   streamlit run Home.py
+   ```
+
+## 📐 Architecture
+WisFast follows a clean service-oriented architecture:
+- `PDFProcessor`: Extracting raw text from multipage documents.
+- `TextPreprocessor`: Cleaning and normalizing French philosophical and technical text.
+- `TfidfIndexManager`: Managing lazy-loaded vector spaces and persistence.
+- `SemanticSearch`: Executing cosine similarity queries against the indexed knowledge base.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ by <b>Amine Moulai</b> for the L3 Software Engineering course (UPVD)</p>
+</div>
