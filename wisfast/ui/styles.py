@@ -102,6 +102,29 @@ def apply_custom_styles():
         transform: scale(1.1) rotate(10deg) !important;
     }
 
+    /* --- CIRCULAR GREEN BUTTON --- */
+    .green-circle-btn button {
+        background: var(--btn-gradient) !important;
+        border-radius: 50% !important;
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 20px !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(4, 110, 92, 0.4) !important;
+        transition: var(--transition) !important;
+    }
+
+    .green-circle-btn button:hover {
+        transform: scale(1.1) rotate(90deg) !important;
+        box-shadow: 0 0 25px rgba(78, 205, 196, 0.4) !important;
+        border-color: var(--secondary-color) !important;
+    }
+
     /* --- SEARCH BAR REFINEMENT --- */
     .stTextInput input {
         background-color: rgba(255, 255, 255, 0.04) !important;

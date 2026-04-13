@@ -36,6 +36,8 @@ def run():
         st.session_state.is_uploading = False
     if "search_query" not in st.session_state:
         st.session_state.search_query = ""
+    if "show_uploader" not in st.session_state:
+        st.session_state.show_uploader = False
 
     # --- SIDEBAR ---
     with st.sidebar:
@@ -102,11 +104,10 @@ def run():
                 </div>
             """, unsafe_allow_html=True)
 
-        current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id and st.session_state.selected_book_id != "UPLOAD" else None
-
+        current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id else None
+        
         header_text = f"Research in: {current_book['display_name']}" if current_book else "What do you want to know?"
-        st.markdown(f"<h1 style='text-align: center; margin-top: 1rem; font-size: 3.5rem; font-family: \"Squada One\", cursive;'>{header_text}</h1>", unsafe_allow_html=True)
-
+        st.markdown(f"<h1 style='text-align: center; margin-top: 1rem; margin-bottom: 2rem; font-size: 3.5rem; font-family: \"Squada One\", cursive;'>{header_text}</h1>", unsafe_allow_html=True)
         
         # Action Bar
         search_col, upload_col = st.columns([6, 1], gap="small")
@@ -114,49 +115,56 @@ def run():
             placeholder = "Ask anything..." if not current_book else f"Search in {current_book['display_name']}..."
             query = st.text_input("Search", value=st.session_state.search_query, placeholder=placeholder, label_visibility="collapsed", key="main_search_input")
         with upload_col:
-            if st.button("➕", width='stretch', help="Upload new PDF"):
-                st.session_state.selected_book_id = "UPLOAD"
+            st.markdown('<div class="green-circle-btn">', unsafe_allow_html=True)
+            if st.button("➕", help="Upload new PDF", key="toggle_uploader_btn"):
+                st.session_state.show_uploader = not st.session_state.show_uploader
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # Dropdown Uploader
+        if st.session_state.show_uploader:
+            st.markdown("""
+                <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); margin-top: 15px;">
+                    <h4 style="margin-bottom:15px; color:#4ecdc4;">Add New Knowledge</h4>
+                </div>
+            """, unsafe_allow_html=True)
+            uploaded_file = st.file_uploader("Drop your PDF here", type=["pdf"], label_visibility="collapsed", key="main_file_uploader")
+            
+            if uploaded_file:
+                with st.status(f"Indexing {uploaded_file.name}...", expanded=True) as status:
+                    temp_pdf_path = f"temp_{uuid.uuid4()}.pdf"
+                    book_id = str(uuid.uuid4())
+                    with open(temp_pdf_path, "wb") as f:
+                        f.write(uploaded_file.getbuffer())
+                    
+                    try:
+                        def extraction_callback(current, total):
+                            status.write(f"Extracting page {current} of {total}...")
+                            return False
+
+                        pages_text = PDFProcessor.extract_pages(temp_pdf_path, callback=extraction_callback)
+                        if pages_text:
+                            db_pages = []
+                            for pt in pages_text:
+                                db_pages.append({
+                                    'page_number': pt.page_number,
+                                    'raw_text': pt.raw_text,
+                                    'cleaned_text': preprocessor.clean(pt.raw_text)
+                                })
+                            repo.create_book(book_id, uploaded_file.name, uploaded_file.name.replace('.pdf', ''), len(db_pages))
+                            repo.save_pages(book_id, db_pages)
+                            index_manager.ensure_index(book_id)
+                            
+                            status.update(label="✅ Index Ready!", state="complete")
+                            st.session_state.selected_book_id = book_id
+                            st.session_state.show_uploader = False
+                            st.rerun()
+                    finally:
+                        if os.path.exists(temp_pdf_path):
+                            os.remove(temp_pdf_path)
 
     # 2. Results Area
-    if st.session_state.selected_book_id == "UPLOAD":
-        st.markdown("---")
-        st.markdown("### Add New Knowledge")
-        uploaded_file = st.file_uploader("Drop your PDF here", type=["pdf"], label_visibility="collapsed")
-        
-        if uploaded_file:
-            with st.status(f"Indexing {uploaded_file.name}...", expanded=True) as status:
-                temp_pdf_path = f"temp_{uuid.uuid4()}.pdf"
-                book_id = str(uuid.uuid4())
-                with open(temp_pdf_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                
-                try:
-                    def extraction_callback(current, total):
-                        status.write(f"Extracting page {current} of {total}...")
-                        return False
-
-                    pages_text = PDFProcessor.extract_pages(temp_pdf_path, callback=extraction_callback)
-                    if pages_text:
-                        db_pages = []
-                        for pt in pages_text:
-                            db_pages.append({
-                                'page_number': pt.page_number,
-                                'raw_text': pt.raw_text,
-                                'cleaned_text': preprocessor.clean(pt.raw_text)
-                            })
-                        repo.create_book(book_id, uploaded_file.name, uploaded_file.name.replace('.pdf', ''), len(db_pages))
-                        repo.save_pages(book_id, db_pages)
-                        index_manager.ensure_index(book_id)
-                        
-                        status.update(label="✅ Index Ready!", state="complete")
-                        st.session_state.selected_book_id = book_id
-                        st.rerun()
-                finally:
-                    if os.path.exists(temp_pdf_path):
-                        os.remove(temp_pdf_path)
-    
-    elif query:
+    if query:
         st.markdown("---")
         search_target_id = st.session_state.selected_book_id if current_book else (books[0]['id'] if books else None)
         
