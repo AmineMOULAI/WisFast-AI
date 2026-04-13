@@ -94,7 +94,7 @@ def run():
     
     with col_t2:
         # Logo above header
-        logo_base64 = get_image_as_base64("assets/WisFast.png")
+        logo_base64 = get_image_as_base64("assets/bolt.png")
         if logo_base64:
             st.markdown(f"""
                 <div style="text-align: center; margin-top: 1rem;">
