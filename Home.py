@@ -14,7 +14,7 @@ def main():
     apply_custom_styles()
 
     # Get logo base64 for animation
-    logo_base64 = get_image_as_base64("docs/WisFast.png")
+    logo_base64 = get_image_as_base64("assets/WisFast.png")
 
     # Animated Hero Section - Updated colors for Dark Theme
     st.markdown(f"""

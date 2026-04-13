@@ -22,7 +22,7 @@ def run():
     
     # Sidebar
     with st.sidebar:
-        st.image("docs/WisFast.png", width='stretch')
+        st.image("assets/WisFast.png", width='stretch')
         st.markdown("---")
         st.header("📚 Your Library")
         

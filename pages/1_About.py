@@ -11,7 +11,7 @@ st.markdown('<div class="fade-in">', unsafe_allow_html=True)
 # Hero Section for About Page
 col1, col2 = st.columns([1, 2], vertical_alignment="center")
 with col1:
-    st.image("docs/WisFast.png", width='stretch')
+    st.image("assets/WisFast.png", width='stretch')
 with col2:
     st.markdown("""
     # REIMAGINING RESEARCH
