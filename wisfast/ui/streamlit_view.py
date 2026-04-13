@@ -9,166 +9,184 @@ from wisfast.services.text_preprocessor import TextPreprocessor
 from wisfast.services.index_manager import TfidfIndexManager
 from wisfast.services.search_strategies import TfidfSemanticStrategy, SearchResult
 from wisfast.ui.styles import apply_custom_styles
+from components.footer import footer
 
 def run():
-    st.set_page_config(page_title="wisFast AI", page_icon="⚡", layout="wide")
+    st.set_page_config(page_title="WisFast Engine", page_icon="⚡", layout="wide")
     apply_custom_styles()
     
-    # Initialize services
     repo = SQLiteRepository()
     preprocessor = TextPreprocessor()
     index_manager = TfidfIndexManager()
     search_strategy = TfidfSemanticStrategy(index_manager, preprocessor)
     
-    # Sidebar
+    # Initialize state
+    if "selected_book_id" not in st.session_state:
+        st.session_state.selected_book_id = None
+    if "is_uploading" not in st.session_state:
+        st.session_state.is_uploading = False
+    if "search_query" not in st.session_state:
+        st.session_state.search_query = ""
+
+    # --- SIDEBAR ---
     with st.sidebar:
-        st.image("assets/WisFast.png", width='stretch')
-        st.markdown("---")
-        st.header("📚 Your Library")
+        st.markdown(f"""
+        <div class="bolt-container" style="margin-bottom: 2rem;">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/lightning-bolt.png" style="width:30px;">
+            <span class="bolt-text" style="font-size: 1.5rem; color: white; margin-left:10px;">WisFast AI</span>
+        </div>
+        """, unsafe_allow_html=True)
         
+        st.markdown('<div class="sidebar-section-header">Navigation</div>', unsafe_allow_html=True)
+        if st.button("🏠 Home Feed", width='stretch', key="nav_home"):
+            st.session_state.selected_book_id = None
+            st.session_state.search_query = ""
+            st.switch_page("Home.py")
+        
+        st.markdown('<div class="sidebar-section-header">Recent Research</div>', unsafe_allow_html=True)
+        all_history = repo.get_all_search_history(limit=5)
+        if not all_history:
+            st.caption("No recent threads.")
+        for h in all_history:
+            h_col1, h_col2 = st.columns([5, 1])
+            with h_col1:
+                if st.button(f"🔍 {h['query'][:20]}...", key=f"side_h_{h['id']}", width='stretch'):
+                    st.session_state.selected_book_id = h['book_id']
+                    st.session_state.search_query = h['query']
+                    st.rerun()
+            with h_col2:
+                if st.button("🗑️", key=f"del_h_{h['id']}", help="Delete thread"):
+                    repo.delete_search_history(h['id'])
+                    st.rerun()
+
+        st.markdown('<div class="sidebar-section-header">Knowledge Library</div>', unsafe_allow_html=True)
         books = repo.get_books()
-        book_options = {b['id']: b['display_name'] for b in books}
-        
-        if not book_options:
-            st.info("No books yet. Upload one to get started!")
-            selected_book_id = None
-        else:
-            selected_book_id = st.selectbox(
-                "Select a book to search",
-                options=list(book_options.keys()),
-                format_func=lambda x: book_options[x]
-            )
-            
-        st.markdown("---")
-        st.caption("WisFast AI v1.0")
+        if not books:
+            st.caption("Library is empty.")
+        for b in books:
+            b_col1, b_col2 = st.columns([5, 1])
+            with b_col1:
+                if st.button(f"📄 {b['display_name'][:20]}", width='stretch', key=f"side_b_{b['id']}"):
+                    st.session_state.selected_book_id = b['id']
+                    st.session_state.search_query = ""
+                    st.rerun()
+            with b_col2:
+                if st.button("🗑️", key=f"del_b_{b['id']}", help="Remove book"):
+                    repo.delete_book(b['id'])
+                    if st.session_state.selected_book_id == b['id']:
+                        st.session_state.selected_book_id = None
+                    st.rerun()
 
-    # Hero Section
+    # --- MAIN CONTENT ---
     st.markdown('<div class="fade-in">', unsafe_allow_html=True)
-    col_h1, col_h2 = st.columns([2, 1])
-    with col_h1:
-        st.title("WisFast AI")
-        st.markdown("### Smart research in your books. ⚡")
-        st.write("Stop wasting hours on Ctrl+F. Get precise answers from your PDFs in seconds.")
-    st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("---")
+    # 1. Top Section
+    col_t1, col_t2, col_t3 = st.columns([1, 6, 1])
     
-    # Upload & Search Tabs
-    tab_search, tab_upload = st.tabs(["🔍 Search", "📤 Upload"])
-    
-    with tab_upload:
-        st.subheader("Add to your library")
-        uploaded_file = st.file_uploader("Drop your PDF here", type=["pdf"])
+    with col_t2:
+        current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id and st.session_state.selected_book_id != "UPLOAD" else None
         
-        if uploaded_file is not None:
-            file_name = uploaded_file.name
-            if not any(b['file_name'] == file_name for b in books):
-                if "is_uploading" not in st.session_state:
-                    st.session_state.is_uploading = False
+        header_text = f"Research in: {current_book['display_name']}" if current_book else "What do you want to know?"
+        st.markdown(f"<h1 style='text-align: center; margin-top: 2rem; font-size: 3rem;'>{header_text}</h1>", unsafe_allow_html=True)
+        
+        # Action Bar
+        search_col, upload_col = st.columns([6, 1], gap="small")
+        with search_col:
+            placeholder = "Ask anything..." if not current_book else f"Search in {current_book['display_name']}..."
+            query = st.text_input("Search", value=st.session_state.search_query, placeholder=placeholder, label_visibility="collapsed", key="main_search_input")
+        with upload_col:
+            if st.button("➕", width='stretch', help="Upload new PDF"):
+                st.session_state.selected_book_id = "UPLOAD"
+                st.rerun()
 
-                if not st.session_state.is_uploading:
-                    if st.button(f"Start Processing {file_name}", width='stretch'):
-                        st.session_state.is_uploading = True
-                        st.session_state.stop_upload = False
-                        st.rerun()
-                else:
-                    with st.status(f"Processing {file_name}...", expanded=True) as status:
-                        # Save uploaded file temporarily
-                        temp_pdf_path = f"temp_{uuid.uuid4()}.pdf"
-                        book_id = str(uuid.uuid4())
-                        with open(temp_pdf_path, "wb") as f:
-                            f.write(uploaded_file.getbuffer())
+    # 2. Results Area
+    if st.session_state.selected_book_id == "UPLOAD":
+        st.markdown("---")
+        st.markdown("### Add New Knowledge")
+        uploaded_file = st.file_uploader("Drop your PDF here", type=["pdf"], label_visibility="collapsed")
+        
+        if uploaded_file:
+            with st.status(f"Indexing {uploaded_file.name}...", expanded=True) as status:
+                temp_pdf_path = f"temp_{uuid.uuid4()}.pdf"
+                book_id = str(uuid.uuid4())
+                with open(temp_pdf_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                
+                try:
+                    def extraction_callback(current, total):
+                        status.write(f"Extracting page {current} of {total}...")
+                        return False
 
-                        try:
-                            stop_placeholder = st.empty()
-                            if stop_placeholder.button("⏹️ Stop Process", key="stop_upload_btn"):
-                                st.session_state.stop_upload = True
-                                st.session_state.is_uploading = False
-
-                            def extraction_callback(current, total):
-                                if st.session_state.get("stop_upload", False):
-                                    return True
-                                status.write(f"Extracting page {current} of {total}...")
-                                return False
-
-                            st.write("Extracting text...")
-                            processor = PDFProcessor()
-                            pages_text = processor.extract_pages(temp_pdf_path, callback=extraction_callback)
-
-                            if st.session_state.get("stop_upload", False):
-                                status.update(label="❌ Process stopped by user.", state="error", expanded=False)
-                                st.warning("Upload cancelled.")
-                                st.session_state.is_uploading = False
-                                return
-
-                            if pages_text:
-                                st.write("Preprocessing and indexing...")
-                                db_pages = []
-                                for pt in pages_text:
-                                    if st.session_state.get("stop_upload", False): break
-                                    cleaned = preprocessor.clean(pt.raw_text)
-                                    db_pages.append({
-                                        'page_number': pt.page_number,
-                                        'raw_text': pt.raw_text,
-                                        'cleaned_text': cleaned
-                                    })
-
-                                if not st.session_state.get("stop_upload", False):
-                                    repo.create_book(book_id, file_name, file_name.replace('.pdf', ''), len(db_pages))
-                                    repo.save_pages(book_id, db_pages)
-                                    index_manager.ensure_index(book_id)
-
-                                    status.update(label=f"✅ {file_name} indexed!", state="complete", expanded=False)
-                                    st.success(f"Success! {len(db_pages)} pages are now searchable.")
-                                    time.sleep(1)
-                                    st.session_state.is_uploading = False
-                                    st.rerun()
-                            else:
-                                st.error("Could not extract text from this PDF.")
-                                st.session_state.is_uploading = False
-                        finally:
-                            if os.path.exists(temp_pdf_path):
-                                os.remove(temp_pdf_path)
-            else:
-                st.info("This book is already in your library.")
-    with tab_search:
-        if not selected_book_id:
-            st.warning("Please upload or select a book first.")
-        else:
-            search_col1, search_col2 = st.columns([4, 1])
-            with search_col1:
-                query = st.text_input("Search query", placeholder="What are you looking for today?", label_visibility="collapsed")
-            with search_col2:
-                search_btn = st.button("Search", width='stretch')
-            
-            if query or search_btn:
-                if not query:
-                    st.toast("Please enter a query first!")
-                else:
-                    with st.spinner("Searching through pages..."):
-                        results = search_strategy.search(query, selected_book_id, k=5)
+                    pages_text = PDFProcessor.extract_pages(temp_pdf_path, callback=extraction_callback)
+                    if pages_text:
+                        db_pages = []
+                        for pt in pages_text:
+                            db_pages.append({
+                                'page_number': pt.page_number,
+                                'raw_text': pt.raw_text,
+                                'cleaned_text': preprocessor.clean(pt.raw_text)
+                            })
+                        repo.create_book(book_id, uploaded_file.name, uploaded_file.name.replace('.pdf', ''), len(db_pages))
+                        repo.save_pages(book_id, db_pages)
+                        index_manager.ensure_index(book_id)
                         
-                    if not results:
-                        st.markdown('<div class="fade-in">', unsafe_allow_html=True)
-                        st.warning("No matches found. Try different keywords.")
-                        st.markdown('</div>', unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"#### Found {len(results)} relevant pages")
-                        # Display results in a grid (2 columns)
-                        for i in range(0, len(results), 2):
-                            cols = st.columns(2)
-                            for j in range(2):
-                                if i + j < len(results):
-                                    r = results[i + j]
-                                    with cols[j]:
-                                        with st.container(border=True):
-                                            st.metric(label=f"PAGE {r.page_number}", value=f"{r.relevance_percent}%")
-                                            st.markdown("**Snippet:**")
-                                            st.markdown(f"_{r.snippet}_")
-                                            with st.expander("Read Full Page"):
-                                                st.write(r.raw_text)
-                            st.markdown(" ") # Spacer
+                        status.update(label="✅ Index Ready!", state="complete")
+                        st.session_state.selected_book_id = book_id
+                        st.rerun()
+                finally:
+                    if os.path.exists(temp_pdf_path):
+                        os.remove(temp_pdf_path)
     
-    # Footer (can be imported from components if needed)
-    st.markdown("---")
-    st.caption("Built with ❤️ for UPVD")
+    elif query:
+        st.markdown("---")
+        search_target_id = st.session_state.selected_book_id if current_book else (books[0]['id'] if books else None)
+        
+        if not search_target_id:
+            st.warning("Please upload a document to begin searching.")
+        else:
+            if st.session_state.search_query != query:
+                repo.add_search_history(search_target_id, query)
+                st.session_state.search_query = query
+                
+            with st.spinner("Sourcing..."):
+                results = search_strategy.search(query, search_target_id, k=5)
+            
+            if results:
+                for r in results:
+                    st.markdown(f"""
+                    <div class="result-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <div class="doc-badge">PAGE {r.page_number}</div>
+                            <span style="color: #4ecdc4; font-weight:700;">{r.relevance_percent}% Match</span>
+                        </div>
+                        <p style="font-size:1.1rem; line-height:1.7; color: #ffffff;">{r.snippet}</p>
+                        <details style="cursor:pointer; margin-top:15px; color:#a0aec0;">
+                            <summary>Show source text</summary>
+                            <div class="source-text-block">
+                                {r.raw_text}
+                            </div>
+                        </details>
+                    </div>
+                    """, unsafe_allow_html=True)
+            else:
+                st.warning("No matches found.")
+    
+    else:
+        if not current_book:
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            st.markdown("""
+            <div style='text-align: center; opacity: 0.6;'>
+                <h3>Select a book from the sidebar to start a deep-dive research session.</h3>
+                <p>Or use the search bar above to query your library globally.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("---")
+            st.info(f"Book: {current_book['display_name']} | Pages: {current_book['page_count']} indexed.")
+            if st.button("🗑️ Forget this Book", type="secondary"):
+                repo.delete_book(current_book['id'])
+                st.session_state.selected_book_id = None
+                st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    footer()
