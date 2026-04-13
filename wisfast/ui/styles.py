@@ -23,32 +23,12 @@ def apply_custom_styles():
         background-color: var(--bg-dark) !important;
     }
 
-    /* --- PROFESSIONAL RECTANGULAR BUTTONS --- */
-    div.stButton > button {
-        border-radius: 10px !important; /* Professional radius */
-        padding: 0.6rem 1.8rem !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 600 !important;
-        background: var(--btn-gradient) !important;
-        color: white !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
-        transition: var(--transition) !important;
-    }
-
-    div.stButton > button:hover {
-        background: linear-gradient(135deg, #058c75 0%, #046e5c 100%) !important;
-        border-color: var(--secondary-color) !important;
-        transform: translateY(-2px) !important;
-    }
-
     /* --- SIDEBAR REFINEMENTS --- */
     section[data-testid="stSidebar"] {
         background-color: var(--sidebar-bg) !important;
         border-right: 1px solid var(--border-color) !important;
     }
 
-    /* Sidebar Section Headers */
     .sidebar-section-header {
         font-family: 'Squada One', cursive;
         color: var(--secondary-color);
@@ -59,7 +39,6 @@ def apply_custom_styles():
         text-transform: uppercase;
     }
 
-    /* Sidebar Navigation & Library Buttons */
     section[data-testid="stSidebar"] div.stButton > button {
         background: rgba(255, 255, 255, 0.02) !important;
         border-radius: 8px !important;
@@ -77,7 +56,7 @@ def apply_custom_styles():
         transform: translateX(6px) !important;
     }
 
-    /* --- ONLY DELETE BUTTON IS ROUND --- */
+    /* --- ROUND DELETE BUTTON --- */
     div.stButton > button[key*="del"] {
         background: rgba(255, 255, 255, 0.03) !important;
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -85,7 +64,7 @@ def apply_custom_styles():
         width: 34px !important;
         height: 34px !important;
         min-width: 34px !important;
-        border-radius: 50% !important; /* Perfect Circle */
+        border-radius: 50% !important;
         padding: 0 !important;
         display: flex !important;
         align-items: center !important;
@@ -94,41 +73,77 @@ def apply_custom_styles():
         margin-top: 4px !important;
     }
 
-    div.stButton > button[key*="del"]:hover {
-        background: rgba(255, 107, 107, 0.15) !important;
-        border-color: #ff6b6b !important;
-        color: #ff6b6b !important;
-        box-shadow: 0 0 20px rgba(255, 107, 107, 0.3) !important;
-        transform: scale(1.1) rotate(10deg) !important;
+    /* --- CHAT-LIKE CONTENT AREA --- */
+    .main-content-container {
+        max-width: 850px;
+        margin: 0 auto;
+        padding-bottom: 150px; /* Space for bottom bar */
     }
 
-    /* --- CIRCULAR GREEN BUTTON --- */
-    .green-circle-btn button {
-        background: var(--btn-gradient) !important;
-        border-radius: 50% !important;
-        width: 48px !important;
-        height: 48px !important;
-        min-width: 48px !important;
-        padding: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 20px !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        box-shadow: 0 4px 15px rgba(4, 110, 92, 0.4) !important;
-        transition: var(--transition) !important;
+    .result-card {
+        background: transparent;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 1rem;
     }
 
-    .green-circle-btn button:hover {
-        transform: scale(1.1) rotate(90deg) !important;
-        box-shadow: 0 0 25px rgba(78, 205, 196, 0.4) !important;
-        border-color: var(--secondary-color) !important;
+    .doc-badge {
+        background: rgba(4, 110, 92, 0.2);
+        color: var(--secondary-color);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: 'Squada One', cursive;
+        font-size: 0.8rem;
+        display: inline-block;
+        margin-bottom: 10px;
     }
 
-    /* --- COMPACT FILE UPLOADER AS BUTTON --- */
+    .source-text-block {
+        margin-top: 15px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        white-space: pre-wrap;
+    }
+
+    /* --- FLOATING BOTTOM ACTION BAR --- */
+    .stChatInputContainer {
+        padding-bottom: 30px !important;
+    }
+
+    /* Styling for the custom action bar container */
+    .bottom-bar-fixed {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 20px 0 40px 0;
+        background: linear-gradient(to top, var(--bg-dark) 70%, transparent);
+        z-index: 99;
+        display: flex;
+        justify-content: center;
+    }
+
+    .action-bar-pill {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 8px 15px;
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    /* --- COMPACT UPLOADER AS + ICON --- */
     .compact-uploader [data-testid="stFileUploader"] {
-        width: 48px;
-        padding: 0;
+        width: 40px;
     }
     .compact-uploader [data-testid="stFileUploader"] section {
         padding: 0 !important;
@@ -136,78 +151,43 @@ def apply_custom_styles():
         border: none !important;
     }
     .compact-uploader [data-testid="stFileUploader"] section > div {
-        display: none; /* Hide 'Drag and drop' text */
+        display: none;
     }
     .compact-uploader [data-testid="stFileUploader"] button {
-        background: var(--btn-gradient) !important;
+        background: rgba(255,255,255,0.1) !important;
         border-radius: 50% !important;
-        width: 48px !important;
-        height: 48px !important;
-        min-width: 48px !important;
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
         margin: 0 !important;
         color: white !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        font-size: 0 !important; /* Hide 'Browse files' text */
+        border: none !important;
+        font-size: 0 !important;
     }
     .compact-uploader [data-testid="stFileUploader"] button::before {
-        content: "➕";
-        font-size: 20px;
+        content: "+";
+        font-size: 24px;
+        font-weight: 300;
     }
     .compact-uploader [data-testid="stFileUploader"] button:hover {
-        transform: scale(1.1) rotate(90deg);
-        border-color: var(--secondary-color) !important;
+        background: var(--primary-color) !important;
+        transform: scale(1.1);
     }
 
-    /* --- SEARCH BAR REFINEMENT --- */
+    /* --- SEARCH INPUT REFINEMENT --- */
     .stTextInput input {
-        background-color: rgba(255, 255, 255, 0.04) !important;
-        border-radius: 12px !important; /* Structured, not pill */
-        border: 1.5px solid var(--border-color) !important;
-        padding: 1.2rem 1.5rem !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 10px 0 !important;
         color: white !important;
+        font-size: 1.1rem !important;
+    }
+    .stTextInput div[data-baseweb="base-input"] {
+        background-color: transparent !important;
+        border: none !important;
     }
 
-    .stTextInput input:focus {
-        border-color: var(--secondary-color) !important;
-        box-shadow: 0 0 30px rgba(78, 205, 196, 0.1) !important;
-    }
-
-    /* Result Cards */
-    .result-card {
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 20px;
-        padding: 2.2rem;
-        border: 1px solid var(--border-color);
-        margin-bottom: 2.5rem;
-    }
-
-    /* Citation & Badge Styling */
-    .doc-badge {
-        background: rgba(4, 110, 92, 0.3);
-        color: var(--secondary-color);
-        padding: 6px 14px;
-        border-radius: 10px;
-        font-family: 'Squada One', cursive;
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-    }
-
-    /* --- SOURCE TEXT ENHANCEMENT --- */
-    .source-text-block {
-        margin-top: 15px;
-        padding: 20px;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        color: #e2e8f0;
-        font-size: 0.95rem;
-        line-height: 1.8;
-        white-space: pre-wrap;
-        max-height: 400px;
-        overflow-y: auto;
-    }
-
-    /* Animations */
+    /* --- ANIMATIONS --- */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
