@@ -86,7 +86,7 @@ Objective: Define a clear package layout that matches the architecture and is ea
 
 - [x] Create the `wisfast` package and subpackages (`ui`, `services`, `data`, `evaluation`). 
 - [x] Implement a `config.py` module to centralize constants (paths for DB and pickle files, TF‑IDF settings, top‑K result count, language configuration).
-- [ ] Wire `app.py` to call a `run()` function in `wisfast/ui/streamlit_view.py` to keep the entrypoint thin.
+- [x] Wire `app.py` to call a `run()` function in `wisfast/ui/streamlit_view.py` to keep the entrypoint thin. [5315df4]
 
 ---
 
