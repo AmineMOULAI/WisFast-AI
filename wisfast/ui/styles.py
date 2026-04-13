@@ -155,6 +155,15 @@ def apply_custom_styles():
     @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
+    @keyframes bolt-glow {
+        0% { filter: drop-shadow(0 0 5px rgba(78, 205, 196, 0.2)); transform: translateY(0); }
+        50% { filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.6)); transform: translateY(-10px); }
+        100% { filter: drop-shadow(0 0 5px rgba(78, 205, 196, 0.2)); transform: translateY(0); }
+    }
+    .bolt-animated {
+        animation: bolt-glow 3s ease-in-out infinite;
+    }
+
     #MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden; }
     </style>
     """, unsafe_allow_html=True)
