@@ -23,7 +23,7 @@
 ## 🗺️ Roadmap & Future Enhancements
 We are constantly pushing the boundaries of what WisFast AI can do. Here are the features currently in development:
 
-- **👁️ OCR Integration:** Adding support for scanned documents and images using Tesseract/PaddleOCR to ensure no knowledge is left behind.
+- **🔍 OCR Integration:** Adding support for scanned documents and images using Tesseract/PaddleOCR to ensure no knowledge is left behind.
 - **🌍 Multilingual Expansion:** Full UI and semantic search support for **English (EN)** and **Arabic (AR)** to cater to a global research audience.
 - **🤖 Advanced NLP (LLM/BERT):** Transitioning from TF-IDF to Transformer-based embeddings (BERT/E5) for deeper, context-aware semantic understanding.
 - **📊 Research Export:** Capability to export search results and snippets into structured Research Reports (PDF/Markdown).
