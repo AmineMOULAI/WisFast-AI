@@ -115,10 +115,10 @@ def run():
         # We have a book, show search results or prompt
         st.markdown('<div class="main-content-container fade-in">', unsafe_allow_html=True)
         
-        header_text = f"Research in: {current_book['display_name']}"
-        st.markdown(f"<h3 style='font-family: \"Squada One\", cursive; color: #4ecdc4; margin-bottom: 2rem;'>{header_text}</h3>", unsafe_allow_html=True)
-
         if query:
+            header_text = f"Research in: {current_book['display_name']}"
+            st.markdown(f"<h3 style='font-family: \"Squada One\", cursive; color: #4ecdc4; margin-bottom: 2rem;'>{header_text}</h3>", unsafe_allow_html=True)
+            
             with st.spinner("Sourcing..."):
                 results = search_strategy.search(query, current_book['id'], k=5)
             
@@ -139,7 +139,14 @@ def run():
             else:
                 st.warning("No exact matches found. Try broad keywords.")
         else:
-            st.info("Ready! Use the search bar below to ask questions about this document.")
+            # Subtle indicator of which book is loaded
+            st.markdown(f"""
+                <div style="text-align: center; margin-top: 25vh; opacity: 0.5;">
+                    <p style="color: #a0aec0; font-family: 'Squada One', cursive; letter-spacing: 2px;">
+                        READY TO SEARCH IN: {current_book['display_name'].upper()}
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -150,7 +157,7 @@ def run():
         bar_col1, bar_col2 = st.columns([1, 15])
         
         with bar_col1:
-            st.markdown('<div class="compact-uploader">', unsafe_allow_html=True)
+            st.markdown('<div class="compact-uploader" title="Upload new book">', unsafe_allow_html=True)
             uploaded_file = st.file_uploader("+", type=["pdf"], label_visibility="collapsed", key="bar_uploader")
             st.markdown('</div>', unsafe_allow_html=True)
             
@@ -162,7 +169,7 @@ def run():
 
             st.text_input(
                 "Search",
-                placeholder=f"Search in {current_book['display_name']}...",
+                placeholder=f"Ask anything about {current_book['display_name']}...",
                 label_visibility="collapsed",
                 key="new_query_input",
                 on_change=handle_search
