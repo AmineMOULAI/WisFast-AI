@@ -75,6 +75,7 @@ def run():
                     with st.status(f"Processing {file_name}...", expanded=True) as status:
                         # Save uploaded file temporarily
                         temp_pdf_path = f"temp_{uuid.uuid4()}.pdf"
+                        book_id = str(uuid.uuid4())
                         with open(temp_pdf_path, "wb") as f:
                             f.write(uploaded_file.getbuffer())
 
