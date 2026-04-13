@@ -90,7 +90,7 @@ class SQLiteRepository:
             cursor.execute('''
                 INSERT INTO books (id, file_name, display_name, page_count, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?)
-            ''', (book_id, file_name, display_name, page_count, datetime.now(), datetime.now()))
+            ''', (book_id, file_name, display_name, page_count, datetime.now().isoformat(), datetime.now().isoformat()))
             conn.commit()
 
     def get_books(self) -> List[Dict[str, Any]]:
