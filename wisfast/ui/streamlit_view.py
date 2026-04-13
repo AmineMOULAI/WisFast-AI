@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import time
 import uuid
+import base64
 from typing import List
 from wisfast.data.sqlite_repository import SQLiteRepository
 from wisfast.services.pdf_processor import PDFProcessor
@@ -10,6 +11,14 @@ from wisfast.services.index_manager import TfidfIndexManager
 from wisfast.services.search_strategies import TfidfSemanticStrategy, SearchResult
 from wisfast.ui.styles import apply_custom_styles
 from components.footer import footer
+
+def get_image_as_base64(path):
+    try:
+        with open(path, "rb") as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    except:
+        return ""
 
 def run():
     st.set_page_config(page_title="WisFast Engine", page_icon="⚡", layout="wide")
@@ -84,10 +93,19 @@ def run():
     col_t1, col_t2, col_t3 = st.columns([1, 6, 1])
     
     with col_t2:
+        # Logo above header
+        logo_base64 = get_image_as_base64("assets/WisFast.png")
+        if logo_base64:
+            st.markdown(f"""
+                <div style="text-align: center; margin-top: 1rem;">
+                    <img src="data:image/png;base64,{logo_base64}" class="bolt-animated" style="width: 250px;">
+                </div>
+            """, unsafe_allow_html=True)
+
         current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id and st.session_state.selected_book_id != "UPLOAD" else None
         
         header_text = f"Research in: {current_book['display_name']}" if current_book else "What do you want to know?"
-        st.markdown(f"<h1 style='text-align: center; margin-top: 2rem; font-size: 3rem;'>{header_text}</h1>", unsafe_allow_html=True)
+        st.markdown(f"<h1 style='text-align: center; margin-top: 1rem; font-size: 3rem;'>{header_text}</h1>", unsafe_allow_html=True)
         
         # Action Bar
         search_col, upload_col = st.columns([6, 1], gap="small")
