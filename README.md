@@ -18,33 +18,50 @@
 - **🛡️ Private & Secure:** Local SQLite storage and processing ensures your data stays yours.
 - **📱 Modern UI:** Glassmorphism design with a dark theme, built for high-speed research.
 
-## 🛠️ Tech Stack
-- **Frontend:** Streamlit with Custom CSS (Glassmorphism)
-- **NLP Engine:** Scikit-learn (TF-IDF), NLTK (French Tokenization)
-- **Data Layer:** SQLite for metadata, Pickle for sparse matrices
-- **PDF Core:** PyPDF2
+---
 
-## 📦 Quick Start
+## 📖 How to Use
 
-### Prerequisites
-- Python 3.11+
-- Virtual environment (recommended)
+1. **Launch the Engine**: Access the application via your browser (default: `http://localhost:8501`).
+2. **Add Knowledge**: Click on the **"➕"** (Upload) button in the top action bar or use the upload area.
+3. **Index Your PDF**: Drop your PDF file. The engine will extract, clean, and index the text automatically.
+4. **Search Smart**:
+   - Type natural language queries (e.g., "la vision stoïcienne du bonheur").
+   - Switch between books using the **Knowledge Library** in the sidebar.
+   - Review match percentages and snippets to find the exact page you need.
 
-### Installation
-1. **Clone the repository:**
+---
+
+## 🛠️ Deployment & Setup Tutorials
+
+### 🐳 Option A: Docker (Recommended)
+The fastest way to get started with zero configuration.
+
+1. **Build and Run**:
+   ```bash
+   docker-compose up --build
+   ```
+2. **Access**: Open `http://localhost:8501` in your browser.
+3. **Persistence**: Your indexed data is saved in the `./data` folder on your host machine.
+
+### 🐍 Option B: Manual Installation
+For users who want to run the project directly with Python.
+
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/AmineMOULAI/WisFast-AI.git
    cd WisFast-AI
    ```
-
-2. **Setup Environment:**
+2. **Setup Virtual Environment**:
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+3. **Install Requirements**:
+   ```bash
    pip install -r requirements.txt
    ```
-
-3. **Launch the Engine:**
+4. **Launch the Engine**:
    ```bash
    streamlit run Home.py
    ```
@@ -56,20 +73,16 @@
 WisFast AI is built on a modular, service-oriented architecture designed for scalability and performance.
 
 ### 1. Data Processing Pipeline (`wisfast/services/`)
-- **`PDFProcessor`**: Handles high-speed text extraction from multipage PDF documents using `PyPDF2`. It includes interruptible callbacks for real-time progress tracking in the UI.
-- **`TextPreprocessor`**: A sophisticated normalization engine that performs lowercasing, French-specific tokenization, and filters out stop-words and punctuation using `NLTK`. This ensures the semantic search focuses on meaningful content.
+- **`PDFProcessor`**: Handles high-speed text extraction using `PyPDF2` with real-time UI callbacks.
+- **`TextPreprocessor`**: A sophisticated normalization engine for French-specific tokenization and stop-word filtering using `NLTK`.
 
 ### 2. Semantic Intelligence Engine
-- **`TfidfIndexManager`**: A Singleton service that manages the lifecycle of search indices. It lazily loads vectorizers and sparse matrices, caching them in memory for sub-500ms query responses.
-- **`SearchStrategy (TF-IDF + Cosine Similarity)`**: Instead of looking for exact word matches, this module transforms queries and document pages into high-dimensional vectors. It calculates the **Cosine Similarity** between these vectors to rank pages by their conceptual relevance to the user's intent.
+- **`TfidfIndexManager`**: A Singleton service managing the lifecycle and caching of vector matrices for sub-500ms responses.
+- **`SearchStrategy`**: Transforms queries into high-dimensional vectors and calculates **Cosine Similarity** to find conceptual relevance.
 
 ### 3. Persistence Layer (`wisfast/data/`)
-- **SQLite Metadata Store**: Manages persistent storage for uploaded book metadata, individual page content, and user search history.
-- **Pickle Binary Store**: Optimized storage for the `scikit-learn` TF-IDF models and pre-computed sparse matrices, enabling instant index loading without re-processing.
-
-### 4. UI & Experience (`wisfast/ui/`)
-- **Streamlit View Controller**: Orchestrates the multi-page application flow, handling session state for search history and book selection.
-- **Custom CSS Engine**: Injects custom Glassmorphism styles and CSS animations (like the glowing bolt) to provide a premium, modern feel that diverges from standard Streamlit templates.
+- **SQLite Store**: Manages book metadata, page content, and thread history.
+- **Pickle Store**: Optimized binary storage for pre-computed sparse matrices.
 
 ---
 
