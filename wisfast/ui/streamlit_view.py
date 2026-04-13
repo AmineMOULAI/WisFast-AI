@@ -98,14 +98,15 @@ def run():
         if logo_base64:
             st.markdown(f"""
                 <div style="text-align: center; margin-top: 1rem;">
-                    <img src="data:image/png;base64,{logo_base64}" class="bolt-animated" style="width: 250px;">
+                    <img src="data:image/png;base64,{logo_base64}" class="bolt-animated" style="width: 150px;">
                 </div>
             """, unsafe_allow_html=True)
 
         current_book = repo.get_book(st.session_state.selected_book_id) if st.session_state.selected_book_id and st.session_state.selected_book_id != "UPLOAD" else None
-        
+
         header_text = f"Research in: {current_book['display_name']}" if current_book else "What do you want to know?"
-        st.markdown(f"<h1 style='text-align: center; margin-top: 1rem; font-size: 3rem;'>{header_text}</h1>", unsafe_allow_html=True)
+        st.markdown(f"<h1 style='text-align: center; margin-top: 1rem; font-size: 3.5rem; font-family: \"Squada One\", cursive;'>{header_text}</h1>", unsafe_allow_html=True)
+
         
         # Action Bar
         search_col, upload_col = st.columns([6, 1], gap="small")
